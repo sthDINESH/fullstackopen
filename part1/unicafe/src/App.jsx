@@ -2,7 +2,7 @@ import { useState } from 'react'
 
 const Button = ({onClick, text}) => <button onClick={onClick}>{text}</button>
 
-const Display = ({text, value}) => <p>{text} {value}</p>
+const Display = ({text, value, unit=null}) => <p>{text} {value} {unit}</p>
 
 const App = () => {
   // save clicks of each button to its own state
@@ -13,6 +13,11 @@ const App = () => {
   const handleGood = () => setGood(good + 1)
   const handleNeutral = () => setNeutral(neutral + 1)
   const handleBad = () => setBad(bad + 1)
+
+  const all = good + neutral + bad
+  // score: good=1, neutral=0, bad=-1
+  const average = all > 0 ? ((good * 1) + (bad * -1)) / all : 0
+  const positive = all > 0 ? (good * 100) / all : 0
 
   return (
     <div>
@@ -25,6 +30,9 @@ const App = () => {
       <Display text="good" value={good} />
       <Display text="neutral" value={neutral} />
       <Display text="bad" value={bad} />
+      <Display text="all" value={all} />
+      <Display text="average" value={average} />
+      <Display text="positive" value={positive} unit="%" />
     </div>
   )
 }
