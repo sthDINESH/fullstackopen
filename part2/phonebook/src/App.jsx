@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
 import Filter from './Components/Filter'
 import PersonForm from './Components/PersonForm'
 import Persons from './Components/Persons'
+import phonebookServices from './Services/phonebook'
 
 const App = () => {
   const [persons, setPersons] = useState([]) 
@@ -17,15 +17,22 @@ const App = () => {
     event.preventDefault()
     
     persons.map(x=>x.name).includes(newName)?
-      alert(`${newName} is already added to phonebook`):
-      setPersons(persons.concat({name: newName, number: newNumber}))
+      alert(`${newName} is already added to phonebook`):(
+        phonebookServices
+          .create({name: newName, number: newNumber})
+          .then(person => setPersons(persons.concat(person)))
+          .catch(error => {
+            alert(`Could not add ${newName}`)
+            console.log("Error adding - ", newName, error)
+          })
+      )
   }
 
   useEffect(()=>{
-    axios
-      .get("http://localhost:3001/persons")
-      .then((response)=>{
-        setPersons(response.data)
+    phonebookServices
+      .getAll()
+      .then(persons=>{
+        setPersons(persons)
       })
   }, [])
 
