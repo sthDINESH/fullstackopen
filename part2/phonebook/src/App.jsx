@@ -35,7 +35,12 @@ const App = () => {
             setTimeout(()=>setMessage(null), 5000)
           })
           .catch(error => {
-            alert(`Could not update ${newName}`)
+            setMessage({
+              content: `Information for ${newName} has already been removed from the server`,
+              tag: "error",
+            })
+            setTimeout(()=>setMessage(null), 5000)
+            setPersons(persons.filter(p=>p.name !== newName))
             console.log("Error:", error)
           })
       }
@@ -71,7 +76,11 @@ const App = () => {
             setTimeout(()=>setMessage(null), 5000)
         })
         .catch(e=>{
-          alert(`${persons.find(p=>p.id===id).name} already deleted`)
+          setMessage({
+            content: `${persons.find(p=>p.id===id).name} already deleted`,
+            tag: "error",
+          })
+          setTimeout(()=>setMessage(null), 5000)
           console.log("Error",e)
           setPersons(persons.filter(p => p.id !== id))
         })
