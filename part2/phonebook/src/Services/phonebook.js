@@ -14,4 +14,9 @@ const create = (newPerson) => (
         .then(response => response.data)
 )
 
-export default { getAll, create }
+const erase = (id) => (
+    axios.delete(`${baseUrl}/${id}`)
+        .then(response => response.data)
+)
+
+export default { getAll, create, erase }

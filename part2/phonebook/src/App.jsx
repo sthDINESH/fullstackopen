@@ -11,8 +11,11 @@ const App = () => {
   const [search, setSearch] = useState('')
 
   const handleNewName = (event) => setNewName(event.target.value)
+
   const handleNewNumber = (event) => setNewNumber(event.target.value)
+  
   const handleSearch = (event) => setSearch(event.target.value)
+  
   const handleAdd = (event) => {
     event.preventDefault()
     
@@ -26,6 +29,21 @@ const App = () => {
             console.log("Error adding - ", newName, error)
           })
       )
+  }
+  
+  const deletePerson = (id) => {
+    if(window.confirm(`Delete ${persons.find(p => p.id === id).name}?`)){
+      console.log("Delete", id)
+      phonebookServices.erase(id)
+        .then(person => {
+          setPersons(persons.filter(p => p.id !== person.id))
+        })
+        .catch(e=>{
+          alert(`${persons.find(p=>p.id===id).name} already deleted`)
+          console.log("Error",e)
+          setPersons(persons.filter(p => p.id !== id))
+        })
+    }
   }
 
   useEffect(()=>{
@@ -49,7 +67,7 @@ const App = () => {
         handleNewNumber={handleNewNumber}
       />
       <h2>Numbers</h2>
-      <Persons persons={persons} search={search}/>
+      <Persons persons={persons} search={search} deletePerson={deletePerson}/>
     </div>
   )
 }
