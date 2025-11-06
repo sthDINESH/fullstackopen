@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import Filter from './Components/Filter'
 import PersonForm from './Components/PersonForm'
 import Persons from './Components/Persons'
+import Notification from './Components/Notification'
 import phonebookServices from './Services/phonebook'
 
 const App = () => {
@@ -9,6 +10,7 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [search, setSearch] = useState('')
+  const [message, setMessage] = useState(null)
 
   const handleNewName = (event) => setNewName(event.target.value)
 
@@ -24,7 +26,14 @@ const App = () => {
         const person = persons.find(p=>p.name===newName)
         const updatedPerson = { ...person, number:newNumber}
         phonebookServices.update(updatedPerson.id, updatedPerson)
-          .then(person=>setPersons(persons.map(p=>p.id===person.id ? person:p)))
+          .then(person=>{
+            setPersons(persons.map(p=>p.id===person.id ? person:p))
+            setMessage({
+              content: `Updated ${person.name}`,
+              tag: "success",
+            })
+            setTimeout(()=>setMessage(null), 5000)
+          })
           .catch(error => {
             alert(`Could not update ${newName}`)
             console.log("Error:", error)
@@ -33,7 +42,14 @@ const App = () => {
     } else {
       phonebookServices
         .create({name: newName, number: newNumber})
-        .then(person => setPersons(persons.concat(person)))
+        .then(person => {
+          setPersons(persons.concat(person))
+          setMessage({
+            content: `Added ${newName}`,
+            tag: "success",
+          })
+          setTimeout(()=>setMessage(null), 5000)
+        })
         .catch(error => {
           alert(`Could not add ${newName}`)
           console.log("Error", error)
@@ -45,10 +61,14 @@ const App = () => {
   
   const deletePerson = (id) => {
     if(window.confirm(`Delete ${persons.find(p => p.id === id).name}?`)){
-      console.log("Delete", id)
       phonebookServices.erase(id)
         .then(person => {
           setPersons(persons.filter(p => p.id !== person.id))
+          setMessage({
+              content: `Deleted ${person.name}`,
+              tag: "success",
+            })
+            setTimeout(()=>setMessage(null), 5000)
         })
         .catch(e=>{
           alert(`${persons.find(p=>p.id===id).name} already deleted`)
@@ -68,7 +88,8 @@ const App = () => {
 
   return (
     <div>
-      <h2>Phonebook</h2>
+      <h1>Phonebook</h1>
+      <Notification message={message} />
       <Filter search={search} handleSearch={handleSearch} />
       <h2>add a new</h2>
       <PersonForm 
