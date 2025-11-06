@@ -19,16 +19,28 @@ const App = () => {
   const handleAdd = (event) => {
     event.preventDefault()
     
-    persons.map(x=>x.name).includes(newName)?
-      alert(`${newName} is already added to phonebook`):(
-        phonebookServices
-          .create({name: newName, number: newNumber})
-          .then(person => setPersons(persons.concat(person)))
+    if(persons.map(x=>x.name).includes(newName)){
+      if(window.confirm(`${newName} is already added to phonebook, replace old number with new one?`)){
+        const person = persons.find(p=>p.name===newName)
+        const updatedPerson = { ...person, number:newNumber}
+        phonebookServices.update(updatedPerson.id, updatedPerson)
+          .then(person=>setPersons(persons.map(p=>p.id===person.id ? person:p)))
           .catch(error => {
-            alert(`Could not add ${newName}`)
-            console.log("Error adding - ", newName, error)
+            alert(`Could not update ${newName}`)
+            console.log("Error:", error)
           })
-      )
+      }
+    } else {
+      phonebookServices
+        .create({name: newName, number: newNumber})
+        .then(person => setPersons(persons.concat(person)))
+        .catch(error => {
+          alert(`Could not add ${newName}`)
+          console.log("Error", error)
+        })
+    }
+    setNewName('')
+    setNewNumber('')
   }
   
   const deletePerson = (id) => {

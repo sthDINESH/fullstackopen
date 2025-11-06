@@ -19,4 +19,9 @@ const erase = (id) => (
         .then(response => response.data)
 )
 
-export default { getAll, create, erase }
+const update = (id, updatedPerson) => (
+    axios.put(`${baseUrl}/${id}`, updatedPerson)
+        .then(response => response.data)
+)
+
+export default { getAll, create, erase, update }
