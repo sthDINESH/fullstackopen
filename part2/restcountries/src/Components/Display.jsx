@@ -1,22 +1,22 @@
-const Display = ({list, detail}) => {
-    if(detail){
+const Display = ({searchResults, country, onShow}) => {
+    if(country){
         return (
             <>
-                <h1>{detail.name}</h1>
-                <div>Capital {detail.capital}</div>
-                <div>Area {detail.area}</div>
+                <h1>{country.name.common}</h1>
+                <div>Capital {country.capital}</div>
+                <div>Area {country.area}</div>
 
                 <h2>Languages</h2>
                 <ul>
-                    {detail.languages.map(l => <li>{l}</li>)}
+                    {Object.values(country.languages || []).map(l => <li key={l}>{l}</li>)}
                 </ul>
-                <img src={detail.flag[0]} alt={`Flag for ${detail.name}`}/>
+                <img src={Object.values(country.flags || [])[0]} alt={`Flag for ${country.name.common}`}/>
             </>
         )
     }
-    if(list){
-        if(list.length <= 10){
-            return list.map(c => <div key={c}>{c}</div>)
+    if(searchResults){
+        if(searchResults.length <= 10){
+            return searchResults.map(c => <div key={c}>{c} <button onClick={()=>onShow(c)}>Show</button></div>)
         } else {
             return <div>Too many matches, specify another filter</div>
         }
