@@ -24,3 +24,20 @@ Content-Type: application/json
     "name": "Dinesh Sthapit",
     "number": "44-0342343429"
 }
+
+###
+POST  http://localhost:3001/api/persons
+Content-Type: application/json
+
+{
+    "number": "44-0342343429"
+}
+
+
+###
+POST  http://localhost:3001/api/persons
+Content-Type: application/json
+
+{
+    "name": "Dinesh Sthapit"
+}
