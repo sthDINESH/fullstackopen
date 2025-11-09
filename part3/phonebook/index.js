@@ -32,6 +32,17 @@ app.get("/api/persons", (request, response) => {
     response.json(persons)
 })
 
+// API to return phonebook info with timestamp
+app.get("/info", (request, response) => {
+    response.send(`
+        <div>
+            Phonebook has info for ${persons.length} people.
+            </br>
+            ${new Date().toString()}
+        </div>
+    `)
+})
+
 // API to return a single person in phonebook
 app.get("/api/persons/:id", (request, response) => {
     const id = request.params.id
