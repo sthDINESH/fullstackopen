@@ -27,6 +27,14 @@ let persons = [
     }
 ]
 
+const generateId = () => {
+    let id = null
+    while (!id || persons.map(p => Number(p.id)).includes(id)){
+        id = Math.floor(Math.random() * 100000) 
+    }
+    return id
+}
+
 // API to return all persons in phonebook
 app.get("/api/persons", (request, response) => {
     response.json(persons)
@@ -62,6 +70,22 @@ app.delete("/api/persons/:id", (request, response) => {
     console.log(persons)
     response.status(204).end()
     
+})
+
+// API to add a single person in phonebook
+app.post("/api/persons", (request, response) => {
+    const body = request.body
+    if (!body.name || !body.number){
+        return response.json({
+            "error": "invalid data - missing name or number"
+        })
+    }
+
+    const person = { ...body, id: String(generateId())}
+
+    persons = persons.concat(person)
+
+    response.json(person)
 })
 
 const PORT = 3001
