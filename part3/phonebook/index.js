@@ -10,41 +10,10 @@ morgan.token('body', function (req, res){
     return JSON.stringify(req.body)
 })
 
+app.use(express.static('dist'))
 app.use(express.json())
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
 app.use(cors())
-app.use(express.static('dist'))
-
-// let persons = [
-//     { 
-//       "id": "1",
-//       "name": "Arto Hellas", 
-//       "number": "040-123456"
-//     },
-//     { 
-//       "id": "2",
-//       "name": "Ada Lovelace", 
-//       "number": "39-44-5323523"
-//     },
-//     { 
-//       "id": "3",
-//       "name": "Dan Abramov", 
-//       "number": "12-43-234345"
-//     },
-//     { 
-//       "id": "4",
-//       "name": "Mary Poppendieck", 
-//       "number": "39-23-6423122"
-//     }
-// ]
-
-// const generateId = () => {
-//     let id = null
-//     while (!id || persons.map(p => Number(p.id)).includes(id)){
-//         id = Math.floor(Math.random() * 100000) 
-//     }
-//     return id
-// }
 
 // API to return all persons in phonebook
 app.get("/api/persons", (request, response) => {
@@ -65,7 +34,7 @@ app.get("/info", (request, response) => {
 })
 
 // API to return a single person in phonebook
-app.get("/api/persons/:id", (request, response) => {
+app.get("/api/persons/:id", (request, response, next) => {
     Person.findById(request.params.id)
         .then(person =>{
             if (person) {
@@ -75,23 +44,17 @@ app.get("/api/persons/:id", (request, response) => {
                 return response.status(404).end()
             }
         })
-        .catch(error => {
-            console.log(error.message)
-            response.status(400).send({ error: 'malformatted id' })
-        })
+        .catch(error => next(error))
 })
 
 // API to delete a single person in phonebook
-app.delete("/api/persons/:id", (request, response) => {
+app.delete("/api/persons/:id", (request, response, next) => {
     Person.findByIdAndDelete(request.params.id)
         .then(deletedPerson => {
             console.log(deletedPerson)
             response.status(204).end()
         })
-        .catch(error => {
-            console.log(error.message)
-            response.status(400).send({ error: 'malformatted id' })
-        })
+        .catch(error => next(error))
 })
 
 // API to add a single person in phonebook
@@ -113,6 +76,25 @@ app.post("/api/persons", (request, response) => {
         return response.json(p)
     })
 })
+
+// handler of requests with unknown endpoint
+const unknownEndpoint = (request, response) => {
+  response.status(404).send({ error: 'unknown endpoint' })
+}
+
+app.use(unknownEndpoint)
+
+// error handler middleware
+const errorHandler = (error, request, response, next) => {
+  console.error(error.message)
+
+  if (error.name === 'CastError') {
+    return response.status(400).send({ error: 'malformatted id' })
+  } 
+
+  next(error)
+}
+app.use(errorHandler)
 
 const PORT = process.env.PORT || 3001
 app.listen(PORT, ()=> {
