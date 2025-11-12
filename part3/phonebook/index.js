@@ -34,7 +34,6 @@ app.get("/info", (request, response) => {
                     </div>
                 `)
         })
-    
 })
 
 // API to return a single person in phonebook
@@ -62,35 +61,25 @@ app.delete("/api/persons/:id", (request, response, next) => {
 })
 
 // API to add a single person in phonebook
-app.post("/api/persons", (request, response) => {
+app.post("/api/persons", (request, response, next) => {
     const body = request.body
-    if (!body.name || !body.number){
-        return response.status(400).json({
-            "error": "invalid data - missing name or number"
-        })
-    }
-    // save a new person
     const person = new Person(request.body)
     person.save()
         .then(savedPerson => {
             return response.json(savedPerson)
         })
+        .catch(error => next(error))
 })
 
 // API to update a single person in phonebook
 app.put("/api/persons/:id", (request, response, next) => {
-    if(!request.body.number){
-        return response.status(400).json({
-            error: "missing number"
-        })
-    }
-
     Person.findById(request.params.id)
         .then(person => {
             person.number = request.body.number
             
             person.save()
                 .then(updatedPerson => response.json(updatedPerson))
+                .catch(error=>next(error))
         })
         .catch(error => next(error)) 
 })
@@ -108,6 +97,8 @@ const errorHandler = (error, request, response, next) => {
 
   if (error.name === 'CastError') {
     return response.status(400).send({ error: 'malformatted id' })
+  } else if (error.name === 'ValidationError') {
+    return response.status(400).json({ error: error.message })
   } 
 
   next(error)
