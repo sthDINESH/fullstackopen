@@ -24,13 +24,17 @@ app.get("/api/persons", (request, response) => {
 
 // API to return phonebook info with timestamp
 app.get("/info", (request, response) => {
-    response.send(`
-        <div>
-            Phonebook has info for ${persons.length} people.
-            </br>
-            ${new Date().toString()}
-        </div>
-    `)
+    Person.find({})
+        .then(persons => {
+            response.send(`
+                    <div>
+                        Phonebook has info for ${persons.length} people.
+                        </br>
+                        ${new Date().toString()}
+                    </div>
+                `)
+        })
+    
 })
 
 // API to return a single person in phonebook
