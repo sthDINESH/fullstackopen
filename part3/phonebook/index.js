@@ -38,13 +38,13 @@ app.use(express.static('dist'))
 //     }
 // ]
 
-const generateId = () => {
-    let id = null
-    while (!id || persons.map(p => Number(p.id)).includes(id)){
-        id = Math.floor(Math.random() * 100000) 
-    }
-    return id
-}
+// const generateId = () => {
+//     let id = null
+//     while (!id || persons.map(p => Number(p.id)).includes(id)){
+//         id = Math.floor(Math.random() * 100000) 
+//     }
+//     return id
+// }
 
 // API to return all persons in phonebook
 app.get("/api/persons", (request, response) => {
@@ -92,17 +92,17 @@ app.post("/api/persons", (request, response) => {
         return response.status(400).json({
             "error": "invalid data - missing name or number"
         })
-    } else if(persons.map(p => p.name).includes(body.name)){
-        return response.status(400).json({
-            "error" : "must be unique"
-        })
     }
+    // } else if(persons.map(p => p.name).includes(body.name)){
+    //     return response.status(400).json({
+    //         "error" : "must be unique"
+    //     })
+    // }
 
-    const person = { ...body, id: String(generateId())}
-
-    persons = persons.concat(person)
-
-    response.json(person)
+    const person = new Person(request.body)
+    person.save().then(p => {
+        return response.json(p)
+    })
 })
 
 const PORT = process.env.PORT || 3001
