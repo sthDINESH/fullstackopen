@@ -66,23 +66,32 @@ app.get("/info", (request, response) => {
 
 // API to return a single person in phonebook
 app.get("/api/persons/:id", (request, response) => {
-    const id = request.params.id
-    const person = persons.find(p => p.id === id)
-    if (person) {
-        response.json(person)
-    } else {
-        response.statusMessage = `Person not found with id:${id}`
-        response.status(404).end()
-    }
+    Person.findById(request.params.id)
+        .then(person =>{
+            if (person) {
+                return response.json(person)
+            } else {
+                response.statusMessage = `Person not found with id:${id}`
+                return response.status(404).end()
+            }
+        })
+        .catch(error => {
+            console.log(error.message)
+            response.status(400).send({ error: 'malformatted id' })
+        })
 })
 
 // API to delete a single person in phonebook
 app.delete("/api/persons/:id", (request, response) => {
-    const id = request.params.id
-    persons = persons.filter(p => p.id !== id)
-    console.log(persons)
-    response.status(204).end()
-    
+    Person.findByIdAndDelete(request.params.id)
+        .then(deletedPerson => {
+            console.log(deletedPerson)
+            response.status(204).end()
+        })
+        .catch(error => {
+            console.log(error.message)
+            response.status(400).send({ error: 'malformatted id' })
+        })
 })
 
 // API to add a single person in phonebook
