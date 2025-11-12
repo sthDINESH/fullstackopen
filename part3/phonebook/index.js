@@ -65,16 +65,30 @@ app.post("/api/persons", (request, response) => {
             "error": "invalid data - missing name or number"
         })
     }
-    // } else if(persons.map(p => p.name).includes(body.name)){
-    //     return response.status(400).json({
-    //         "error" : "must be unique"
-    //     })
-    // }
-
+    // save a new person
     const person = new Person(request.body)
-    person.save().then(p => {
-        return response.json(p)
-    })
+    person.save()
+        .then(savedPerson => {
+            return response.json(savedPerson)
+        })
+})
+
+// API to update a single person in phonebook
+app.put("/api/persons/:id", (request, response, next) => {
+    if(!request.body.number){
+        return response.status(400).json({
+            error: "missing number"
+        })
+    }
+
+    Person.findById(request.params.id)
+        .then(person => {
+            person.number = request.body.number
+            
+            person.save()
+                .then(updatedPerson => response.json(updatedPerson))
+        })
+        .catch(error => next(error)) 
 })
 
 // handler of requests with unknown endpoint
