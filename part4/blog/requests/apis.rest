@@ -1,0 +1,23 @@
+GET http://localhost:3003/api/blogs
+
+###
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+
+{
+    "title": "Test blog",
+    "author": "Salman Rushdie",
+    "url": "www.rushdie.com/test-blog",
+    "likes": 10
+}
+
+###
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+
+{
+    "title": "Test blog - 2",
+    "author": "JK Rowling",
+    "url": "www.rowling.com/test-blog-2",
+    "likes": 20
+}
