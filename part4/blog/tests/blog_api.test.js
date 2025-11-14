@@ -67,6 +67,28 @@ describe('blog api', () => {
         assert.strictEqual(savedBlog.likes, 0)
     })
 
+    test('if title is missing in request, responds with the status code 400', async () => {
+        const newBlog = {
+            author: "validator 1",
+            url: "http://validator-1.html",
+        }
+        await api.post('/api/blogs')
+            .send(newBlog)
+            .expect(400)
+
+    })
+
+    test('if url is missing in request, responds with the status code 400', async () => {
+        const newBlog = {
+            title: "test blog",
+            author: "validator 1",
+        }
+        await api.post('/api/blogs')
+            .send(newBlog)
+            .expect(400)
+
+    })
+
     after(async () => {
         await mongoose.connection.close()
     })
