@@ -3,8 +3,9 @@ const Blog = require('../models/blog')
 const { error } = require('../utils/logger')
 
 // API to get all blogs
-blogsRouter.get('/', (request, response) => {
-    Blog.find({}).then(blogs => response.json(blogs))
+blogsRouter.get('/', async (request, response) => {
+    const blogs = await Blog.find({})
+    return response.json(blogs)
 })
 
 // API to save a single blog
