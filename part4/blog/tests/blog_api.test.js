@@ -54,6 +54,19 @@ describe('blog api', () => {
         assert(savedBlogTitles.includes(newBlog.title))
     })
 
+    test('if the likes property is missing from the request, it will default to the value 0', async () => {
+        const newBlog = {
+            title: "test blog",
+            author: "validator 1",
+            url: "http://validator-1.html",
+        }
+        await api.post('/api/blogs')
+            .send(newBlog)
+            .expect(201)
+        const savedBlog = await Blog.findOne(newBlog)
+        assert.strictEqual(savedBlog.likes, 0)
+    })
+
     after(async () => {
         await mongoose.connection.close()
     })
