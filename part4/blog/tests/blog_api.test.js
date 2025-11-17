@@ -101,6 +101,30 @@ describe('blog api', () => {
         assert(!updatedBlogTitles.includes(blogToDelete.title))
     })
 
+    test('updating non existent blog returns 404', async () => {
+        const nonExistingId = await helper.nonExistingId()
+
+        await api.put(`/api/blogs/${nonExistingId}`)
+            .expect(404)
+    })
+
+    test('likes for a blog can be updated', async () => {
+        const blogs = await helper.blogsInDB()
+        const blogToUpdate = blogs[0]
+        
+        const blogId = blogToUpdate.id
+        const blogLikes = blogToUpdate.likes
+
+        
+        const response = await api.put(`/api/blogs/${blogId}`)
+            .send({ likes: blogLikes + 1})
+            .expect(200)
+            .expect('Content-Type', /application\/json/)
+        
+        const updatedBlog = response.body
+        
+        assert.strictEqual(updatedBlog.likes, blogLikes + 1)
+    })
     
 })
 
