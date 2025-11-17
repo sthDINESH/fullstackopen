@@ -8,12 +8,12 @@ const Blog = require('../models/blog')
 
 const api = supertest(app)
 
-beforeEach(async () => {
-    await Blog.deleteMany({})
-    await Blog.insertMany(helper.initialBlogs)
-})
 
 describe('blog api', () => {
+    beforeEach(async () => {
+        await Blog.deleteMany({})
+        await Blog.insertMany(helper.initialBlogs)
+    })
 
     test('returns the correct amount of blog posts in the JSON format', async () => {
         const response = await api.get('/api/blogs')
@@ -89,7 +89,21 @@ describe('blog api', () => {
 
     })
 
-    after(async () => {
-        await mongoose.connection.close()
+    test('a blog can be deleted', async () => {
+        const blogs = await helper.blogsInDB()
+        const blogToDelete = blogs[0]
+
+        await api.delete(`/api/blogs/${blogToDelete.id}`)
+            .expect(204)
+
+        const updatedBlogs = await helper.blogsInDB()
+        const updatedBlogTitles = updatedBlogs.map(b => b.title)
+        assert(!updatedBlogTitles.includes(blogToDelete.title))
     })
+
+    
+})
+
+after(async () => {
+    await mongoose.connection.close()
 })
