@@ -31,5 +31,27 @@ Content-Type: application/json
 
 ###
 
+POST http://localhost:3003/api/users
+Content-Type: application/json
+
+{
+    "username": "v3",
+    "name": "validator number3",
+    "password": "abcdval03"
+}
+
+###
+
+POST http://localhost:3003/api/users
+Content-Type: application/json
+
+{
+    "username": "validator3",
+    "name": "validator number3",
+    "password": "a3"
+}
+
+###
+
 GET http://localhost:3003/api/users 
 

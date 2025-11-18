@@ -6,6 +6,14 @@ const User = require("../models/user")
 usersRouter.post("/", async (request, response) => {
     const { username, name, password } = request.body
 
+    // Username length handled by mongoose validation
+    if (password.length < 3) {
+        return response.status(400).json({
+            error: `password validation failed: password(${password}, length ${password.length}) 
+            is shorter than minimum allowed length(3)`
+        })
+    }
+
     const saltRounds = 10
     const passwordHash = await bcrypt.hash(password, saltRounds)
 

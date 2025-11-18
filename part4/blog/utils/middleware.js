@@ -2,7 +2,10 @@ const logger = require('./logger')
 const morgan = require('morgan')
 
 morgan.token('body', (request) => JSON.stringify(request.body))
-const requestLogger = morgan(':method :url :status :res[content-length] - :response-time ms :body')
+
+const requestLogger = process.env.NODE_ENV === 'test'
+  ? (request, response, next) => next()
+  : morgan(':method :url :status :res[content-length] - :response-time ms :body')
 
 // Handle unknown endpoints
 const unknownEndpoint = (request, response) => {
