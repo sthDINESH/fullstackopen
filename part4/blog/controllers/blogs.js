@@ -3,14 +3,6 @@ const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
 const User = require('../models/user')
 
-const getTokenFor = request => {
-  const authHeader = request.get('authorization')
-  if (authHeader && authHeader.includes('Bearer ')){
-    return authHeader.replace('Bearer ','')
-  }
-  return null
-}
-
 // API to get all blogs
 blogsRouter.get('/', async (request, response) => {
   const blogs = await Blog.find({}).populate('user', { username: 1, name: 1 })
@@ -19,7 +11,7 @@ blogsRouter.get('/', async (request, response) => {
 
 // API to save a single blog
 blogsRouter.post('/', async (request, response) => {
-  const decodedToken = await jwt.verify(getTokenFor(request), process.env.SECRET)
+  const decodedToken = await jwt.verify(request.token, process.env.SECRET)
 
   if (!decodedToken.id){
     return response.status(401).json({ error: 'token invalid' })
