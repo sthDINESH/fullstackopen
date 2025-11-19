@@ -21,3 +21,16 @@ Content-Type: application/json
     "url": "www.rowling.com/test-blog-2",
     "likes": 20
 }
+
+
+###
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InZhbGlkYXRvcjEiLCJpZCI6IjY5MWM5NzhkMTA3ZmE4MzA1NWRiOTA0NCIsImlhdCI6MTc2MzU1MjMzNiwiZXhwIjoxNzYzNTU1OTM2fQ.Gt_TxHDfO8s_cwykDwT8x20Yrc7ZwromdqldlM9sAuI
+
+{
+    "title": "Test blog - 2",
+    "author": "JK Rowling",
+    "url": "www.rowling.com/test-blog-2",
+    "likes": 20
+}
