@@ -19,7 +19,7 @@ blogsRouter.post('/', async (request, response) => {
 
   const user = await User.findById(decodedToken.id)
   if(!user) {
-    return response.status(400).json({ error: ' UserId missing or invalid '})
+    return response.status(400).json({ error: ' UserId missing or invalid' })
   }
 
   const { title, author, url, likes } = request.body
@@ -40,8 +40,31 @@ blogsRouter.post('/', async (request, response) => {
 
 // API to delete a single blog
 blogsRouter.delete('/:id', async (request, response) => {
-  await Blog.findByIdAndDelete(request.params.id)
-  return response.status(204).end()
+  const decodedToken = await jwt.verify(request.token, process.env.SECRET)
+  if (!decodedToken.id){
+    return response.status(401).json({ error: 'token invalid' })
+  }
+  const user = await User.findById(decodedToken.id)
+
+  if (!user) {
+    return response.status(400).json({ error: 'UserId missing or invalid' })
+  }
+
+  const blog = await Blog.findById(request.params.id)
+  if(!blog) {
+    return response.status(400).json({ error: 'BlogId missing or invalid' })
+  }
+
+  if (user._id.equals(blog.user._id)){
+    await blog.deleteOne()
+
+    user.blogs = user.blogs.filter(b => !b._id.equals(blog._id))
+    await user.save()
+
+    return response.status(204).end()
+  } else {
+    return response.status(403).json({ error:'UserId does not have permissions' })
+  }
 })
 
 // API to update a blog post
