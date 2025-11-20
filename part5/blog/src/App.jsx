@@ -49,7 +49,7 @@ const App = () => {
     }
   }
 
-  const handleLogout = (event) => {
+  const handleLogout = () => {
     if(window.confirm('Are you sure you want to log out?')){
       window.localStorage.removeItem('blogAppUser')
       blogService.setToken(null)
