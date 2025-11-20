@@ -73,6 +73,17 @@ const App = () => {
     }
   }
 
+  const updateBlog = async (blog) => {
+    try {
+      const updatedBlog = await blogService.update(blog.id, blog)
+      setBlogs( blogs.map(b=>b.id===updatedBlog.id? updatedBlog: b) )
+    }
+    catch (error) {
+      setMessage({content: `Error: ${error.message}`, type: 'error'})
+      setTimeout(()=>setMessage(null), 5000)
+    }
+  }
+
   const login = () => {
     return (
       <form onSubmit={handleLogin}>
@@ -97,33 +108,6 @@ const App = () => {
     )
   }
 
-  // const createBlog = () => {
-  //   return (
-  //     <form onSubmit={handleCreateNew}>
-  //       <h2>create new</h2>
-  //       <div>
-  //         <label>
-  //           title
-  //           <input type='text' value={newBlogTitle} onChange={({target}) => setTitle(target.value)}></input>
-  //         </label>
-  //       </div>
-  //       <div>
-  //         <label>
-  //           author
-  //           <input type='text' value={newBlogAuthor} onChange={({target}) => setAuthor(target.value)}></input>
-  //         </label>
-  //       </div>
-  //       <div>
-  //         <label>
-  //           url
-  //           <input type='text' value={newBlogUrl} onChange={({target}) => setUrl(target.value)}></input>
-  //         </label>
-  //       </div>
-  //       <button type="submit">create</button>
-  //     </form>
-  //   )
-  // }
-
   return (
     <div>
       {!user && login()}
@@ -139,7 +123,7 @@ const App = () => {
             <BlogForm createBlog={createBlog} />
           </Togglable>
           {blogs.map(blog =>
-            <Blog key={blog.id} blog={blog} />
+            <Blog key={blog.id} blog={blog} updateBlog={updateBlog} />
           )}
         </div>
       )}

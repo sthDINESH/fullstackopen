@@ -50,7 +50,7 @@ blogsRouter.delete('/:id', middleware.userExtractor, async (request, response) =
 
 // API to update a blog post
 blogsRouter.put('/:id', async (request, response) => {
-  const blogToUpdate = await Blog.findById(request.params.id)
+  const blogToUpdate = await Blog.findById(request.params.id).populate('user', { username: 1, name: 1 })
   if (!blogToUpdate){
     return response.status(404).end()
   }
