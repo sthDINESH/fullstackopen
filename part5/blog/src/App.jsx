@@ -17,8 +17,8 @@ const App = () => {
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
-      setBlogs( blogs.sort((a, b)=> b.likes - a.likes ))
-    )  
+      setBlogs( blogs.sort((a, b) => b.likes - a.likes ))
+    )
   }, [])
 
   useEffect(() => {
@@ -32,10 +32,10 @@ const App = () => {
 
   const handleLogin = async event => {
     event.preventDefault()
-    console.log("Logging in as", userName, password)
+    console.log('Logging in as', userName, password)
 
     try {
-      const user = await loginService.login({username: userName, password: password})
+      const user = await loginService.login({ username: userName, password: password })
       window.localStorage.setItem('blogAppUser', JSON.stringify(user))
       blogService.setToken(user.token)
       setUser(user)
@@ -44,8 +44,8 @@ const App = () => {
     }
     catch(error) {
       console.log('Error', error.message)
-      setMessage({content: `Wrong username or password`, type: 'error'})
-      setTimeout(()=>setMessage(null), 5000)
+      setMessage({ content: 'Wrong username or password', type: 'error' })
+      setTimeout(() => setMessage(null), 5000)
     }
   }
 
@@ -60,38 +60,38 @@ const App = () => {
   const createBlog = async (blogObject) => {
     try {
       const savedBlog = await blogService.create(blogObject)
-      setMessage({content: `a new blog ${savedBlog.title} by ${savedBlog.author} added`, type: 'success'})
+      setMessage({ content: `a new blog ${savedBlog.title} by ${savedBlog.author} added`, type: 'success' })
       blogFormVisibilityRef.current.toggleVisibility()
-      setTimeout(()=>setMessage(null), 5000)
+      setTimeout(() => setMessage(null), 5000)
       blogService.getAll().then(blogs =>
         setBlogs( blogs )
       )
     }
     catch (error) {
-      setMessage({content: `Error: ${error.message}`, type: 'error'})
-      setTimeout(()=>setMessage(null), 5000)
+      setMessage({ content: `Error: ${error.message}`, type: 'error' })
+      setTimeout(() => setMessage(null), 5000)
     }
   }
 
   const updateBlog = async (blog) => {
     try {
       const updatedBlog = await blogService.update(blog.id, blog)
-      setBlogs( blogs.map(b=>b.id===updatedBlog.id? updatedBlog: b).toSorted((a,b)=>b.likes-a.likes))
+      setBlogs( blogs.map(b => b.id===updatedBlog.id? updatedBlog: b).toSorted((a,b) => b.likes-a.likes))
     }
     catch (error) {
-      setMessage({content: `Error: ${error.message}`, type: 'error'})
-      setTimeout(()=>setMessage(null), 5000)
+      setMessage({ content: `Error: ${error.message}`, type: 'error' })
+      setTimeout(() => setMessage(null), 5000)
     }
   }
 
   const removeBlog = async (blog) => {
     try {
       await blogService.remove(blog.id)
-      setBlogs( blogs.filter(b=>b.id!==blog.id).toSorted((a,b)=>b.likes-a.likes))
+      setBlogs( blogs.filter(b => b.id!==blog.id).toSorted((a,b) => b.likes-a.likes))
     }
     catch (error) {
-      setMessage({content: `Error: ${error.message}`, type: 'error'})
-      setTimeout(()=>setMessage(null), 5000)
+      setMessage({ content: `Error: ${error.message}`, type: 'error' })
+      setTimeout(() => setMessage(null), 5000)
     }
 
   }
@@ -104,13 +104,13 @@ const App = () => {
         <div>
           <label>
             userName
-            <input type='text' value={userName} onChange={({target}) => setUserName(target.value)}></input>
+            <input type='text' value={userName} onChange={({ target }) => setUserName(target.value)}></input>
           </label>
         </div>
         <div>
           <label>
             password
-            <input type='password' value={password} onChange={({target}) => setPassword(target.value)}></input>
+            <input type='password' value={password} onChange={({ target }) => setPassword(target.value)}></input>
           </label>
         </div>
         <div>
@@ -128,8 +128,8 @@ const App = () => {
           <h1>blogs</h1>
           <Notification message={message} />
           <div>
-          {user.username} logged in
-          <button onClick={handleLogout}>Logout</button>
+            {user.username} logged in
+            <button onClick={handleLogout}>Logout</button>
           </div>
           <Togglable buttonLabel='create new blog' ref={blogFormVisibilityRef}>
             <BlogForm createBlog={createBlog} />
