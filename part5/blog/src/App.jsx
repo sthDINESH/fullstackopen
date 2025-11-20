@@ -17,7 +17,7 @@ const App = () => {
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
-      setBlogs( blogs )
+      setBlogs( blogs.sort((a, b)=> b.likes - a.likes ))
     )  
   }, [])
 
@@ -76,7 +76,7 @@ const App = () => {
   const updateBlog = async (blog) => {
     try {
       const updatedBlog = await blogService.update(blog.id, blog)
-      setBlogs( blogs.map(b=>b.id===updatedBlog.id? updatedBlog: b) )
+      setBlogs( blogs.map(b=>b.id===updatedBlog.id? updatedBlog: b).toSorted((a,b)=>b.likes-a.likes))
     }
     catch (error) {
       setMessage({content: `Error: ${error.message}`, type: 'error'})
