@@ -1,6 +1,6 @@
 import { useState } from "react"
 
-const Blog = ({ blog, updateBlog }) => {
+const Blog = ({ blog, updateBlog, removeBlog, user }) => {
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
@@ -21,19 +21,36 @@ const Blog = ({ blog, updateBlog }) => {
     updateBlog(blog)
   }
 
+  const handleDelete = () => {
+    const ok = window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)
+    if (ok) {
+      removeBlog(blog)
+    }
+  }
+
   return (
     <div style={blogStyle}>
       <div style={hideOnVisible}>
         {blog.title} {blog.author} <button onClick={toggleVisibility}>View</button>
       </div>
       <div style={showOnVisible}>
-        {blog.title} {blog.author} <button onClick={toggleVisibility}>hide</button>
-      </div>  
-      <div style={showOnVisible}>{blog.url}</div>  
-      <div style={showOnVisible}>
-        likes: {blog.likes} <button onClick={updateLikes}>likes</button>
-      </div>  
-      <div style={showOnVisible}>{blog.user.username}</div>  
+        <div>
+          {blog.title} {blog.author} <button onClick={toggleVisibility}>hide</button>
+        </div>  
+        <div>{blog.url}</div>  
+        <div>
+          likes: {blog.likes} <button onClick={updateLikes}>likes</button>
+        </div>  
+        <div>{blog.user.username}</div>  
+        <div>  
+        {
+          user.username === blog.user.username 
+          && (
+            <button onClick={handleDelete}>Delete</button>
+          )
+        }
+        </div>
+      </div>
     </div>
   )
 }

@@ -84,6 +84,18 @@ const App = () => {
     }
   }
 
+  const removeBlog = async (blog) => {
+    try {
+      await blogService.remove(blog.id)
+      setBlogs( blogs.filter(b=>b.id!==blog.id).toSorted((a,b)=>b.likes-a.likes))
+    }
+    catch (error) {
+      setMessage({content: `Error: ${error.message}`, type: 'error'})
+      setTimeout(()=>setMessage(null), 5000)
+    }
+
+  }
+
   const login = () => {
     return (
       <form onSubmit={handleLogin}>
@@ -123,7 +135,7 @@ const App = () => {
             <BlogForm createBlog={createBlog} />
           </Togglable>
           {blogs.map(blog =>
-            <Blog key={blog.id} blog={blog} updateBlog={updateBlog} />
+            <Blog key={blog.id} blog={blog} updateBlog={updateBlog} removeBlog={removeBlog} user={user} />
           )}
         </div>
       )}
