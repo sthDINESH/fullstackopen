@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
+import Notification from './components/Notification'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
@@ -11,6 +12,7 @@ const App = () => {
   const [newBlogTitle, setTitle] = useState('')
   const [newBlogAuthor, setAuthor] = useState('')
   const [newBlogUrl, setUrl] = useState('')
+  const [message, setMessage] = useState(null)
 
 
   useEffect(() => {
@@ -42,6 +44,8 @@ const App = () => {
     }
     catch(error) {
       console.log('Error', error.message)
+      setMessage({content: `Wrong username or password`, type: 'error'})
+      setTimeout(()=>setMessage(null), 5000)
     }
   }
 
@@ -61,7 +65,8 @@ const App = () => {
         author: newBlogAuthor, 
         url: newBlogUrl,
       })
-      console.log("Added", savedBlog)
+      setMessage({content: `a new blog ${savedBlog.title} by ${savedBlog.author} added`, type: 'success'})
+      setTimeout(()=>setMessage(null), 5000)
       setTitle('')
       setAuthor('')
       setUrl('')
@@ -70,7 +75,8 @@ const App = () => {
       )
     }
     catch (error) {
-      console.log('Error:', error.message)
+      setMessage({content: `Error: ${error.message}`, type: 'error'})
+      setTimeout(()=>setMessage(null), 5000)
     }
   }
 
@@ -78,6 +84,7 @@ const App = () => {
     return (
       <form onSubmit={handleLogin}>
         <h1>log in to application</h1>
+        <Notification message={message} />
         <div>
           <label>
             userName
@@ -130,6 +137,7 @@ const App = () => {
       {user && (
         <div>
           <h1>blogs</h1>
+          <Notification message={message} />
           <div>
           {user.username} logged in
           <button onClick={handleLogout}>Logout</button>
