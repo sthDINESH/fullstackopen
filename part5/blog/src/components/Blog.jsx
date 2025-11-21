@@ -27,13 +27,14 @@ const Blog = ({ blog, updateBlog, removeBlog, user }) => {
       removeBlog(blog)
     }
   }
+  console.log(blog)
 
   return (
     <div style={blogStyle}>
-      <div style={hideOnVisible}>
+      <div style={hideOnVisible} data-testid="blog-summary">
         {blog.title} {blog.author} <button onClick={toggleVisibility}>View</button>
       </div>
-      <div style={showOnVisible}>
+      <div style={showOnVisible} data-testid="blog-details">
         <div>
           {blog.title} {blog.author} <button onClick={toggleVisibility}>hide</button>
         </div>
