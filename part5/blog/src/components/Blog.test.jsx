@@ -3,24 +3,24 @@ import userEvent from '@testing-library/user-event'
 import Blog from './Blog'
 
 describe('<blog /> ', async () => {
-  const blog = {
-    'title': 'blog-title',
-    'author': 'blog-author',
-    'url': 'www.test-url.com',
-    'likes': 1,
-    'user': {
-      'username': 'tester',
-      'name': 'tester tester',
-      'id': '691c978d107fa83055db9044'
-    },
-    'id': '691cca4f25c05618900f364a'
-  }
-
   const updateBlog = vi.fn()
   const removeBlog = vi.fn()
   const loggedUser = 'tester'
 
   beforeEach(() => {
+    const blog = {
+      'title': 'blog-title',
+      'author': 'blog-author',
+      'url': 'www.test-url.com',
+      'likes': 1,
+      'user': {
+        'username': 'tester',
+        'name': 'tester tester',
+        'id': '691c978d107fa83055db9044'
+      },
+      'id': '691cca4f25c05618900f364a'
+    }
+
     render(
       <Blog
         blog={blog}
