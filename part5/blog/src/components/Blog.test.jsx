@@ -20,7 +20,7 @@ describe('<blog /> ', async () => {
   const removeBlog = vi.fn()
   const loggedUser = 'tester'
 
-  test('renders title and author, but not URL or likes by default', () => {
+  beforeEach(() => {
     render(
       <Blog
         blog={blog}
@@ -29,7 +29,9 @@ describe('<blog /> ', async () => {
         user={loggedUser}
       />
     )
+  })
 
+  test('renders title and author, but not URL or likes by default', () => {
     // Check that summary is visible
     const summary = screen.getByTestId('blog-summary')
     expect(summary).toBeVisible()
@@ -49,15 +51,6 @@ describe('<blog /> ', async () => {
   })
 
   test('shows URL and likes when the button controlling details is clicked', async () => {
-    render(
-      <Blog
-        blog={blog}
-        updateBlog={updateBlog}
-        removeBlog={removeBlog}
-        user={loggedUser}
-      />
-    )
-
     const view = screen.getByText('View')
     const user = userEvent.setup()
     await user.click(view)
@@ -77,5 +70,14 @@ describe('<blog /> ', async () => {
     // Check that likes is in DOM and visible
     const likes = screen.getByText('likes: 1')
     expect(likes).toBeVisible()
+  })
+
+  test('calls event handler for like button when like button is clicked', async () => {
+    const view = screen.getByText('likes')
+    const user = userEvent.setup()
+    await user.click(view)
+    await user.click(view)
+
+    expect(updateBlog.mock.calls).toHaveLength(2)
   })
 })

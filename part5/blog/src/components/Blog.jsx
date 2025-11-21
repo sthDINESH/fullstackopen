@@ -27,7 +27,6 @@ const Blog = ({ blog, updateBlog, removeBlog, user }) => {
       removeBlog(blog)
     }
   }
-  console.log(blog)
 
   return (
     <div style={blogStyle}>
