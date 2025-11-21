@@ -1,4 +1,5 @@
 import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import Blog from './Blog'
 
 describe('<blog /> ', async () => {
@@ -29,7 +30,6 @@ describe('<blog /> ', async () => {
       />
     )
 
-    // screen.debug()
     // Check that summary is visible
     const summary = screen.getByTestId('blog-summary')
     expect(summary).toBeVisible()
@@ -46,5 +46,36 @@ describe('<blog /> ', async () => {
     // Check that likes is in DOM but not visible
     const likes = screen.getByText('likes: 1')
     expect(likes).not.toBeVisible()
+  })
+
+  test('shows URL and likes when the button controlling details is clicked', async () => {
+    render(
+      <Blog
+        blog={blog}
+        updateBlog={updateBlog}
+        removeBlog={removeBlog}
+        user={loggedUser}
+      />
+    )
+
+    const view = screen.getByText('View')
+    const user = userEvent.setup()
+    await user.click(view)
+
+    // Check that summary is not visible
+    const summary = screen.getByTestId('blog-summary')
+    expect(summary).not.toBeVisible()
+
+    // Check that details are visible
+    const details = screen.getByTestId('blog-details')
+    expect(details).toBeVisible()
+
+    // Check that URL is in DOM and visible
+    const url = screen.getByText('www.test-url.com')
+    expect(url).toBeVisible()
+
+    // Check that likes is in DOM and visible
+    const likes = screen.getByText('likes: 1')
+    expect(likes).toBeVisible()
   })
 })
