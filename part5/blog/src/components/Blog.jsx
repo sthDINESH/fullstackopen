@@ -28,6 +28,9 @@ const Blog = ({ blog, updateBlog, removeBlog, user }) => {
     }
   }
 
+  console.log(user)
+  console.log(blog)
+
   return (
     <div style={blogStyle}>
       <div style={hideOnVisible} data-testid="blog-summary">
@@ -44,7 +47,7 @@ const Blog = ({ blog, updateBlog, removeBlog, user }) => {
         <div>{blog.user.username}</div>
         <div>
           {
-            user.username === blog.user.username
+            user && user.username === blog.user.username
           && (
             <button onClick={handleDelete}>Delete</button>
           )
