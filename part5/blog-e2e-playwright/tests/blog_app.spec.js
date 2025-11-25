@@ -1,10 +1,16 @@
 const { describe, beforeEach, test, expect } = require('@playwright/test')
-const { loginWith } = require('./test_helper')
+const { loginWith, createBlog } = require('./test_helper')
 
 const user = {
                 username: "tester",
                 password: "abcd1234" 
             }
+
+const newBlog = {
+    title: 'test blog',
+    author: 'test author',
+    url: 'test-url.com',
+}
 
 describe('Blog app', () => {
     beforeEach(async ({page}) => {
@@ -57,25 +63,30 @@ describe('Blog app', () => {
                 await createNewLocator.click()
                 
                 await expect(page.getByRole('heading', {name:'create new'})).toBeVisible()
-                const titleLocator = page.getByLabel('title')
-                const authorLocator = page.getByLabel('author')
-                const urlLocator = page.getByLabel('url')
-                const createLocator = page.getByRole('button', {name:'create'})
+                
+                await expect(page.getByLabel('title')).toBeVisible()
+                await expect(page.getByLabel('author')).toBeVisible()
+                await expect(page.getByLabel('url')).toBeVisible()
+                await expect(page.getByRole('button', {name:'create'})).toBeVisible()
 
-                await expect(titleLocator).toBeVisible()
-                await expect(authorLocator).toBeVisible()
-                await expect(urlLocator).toBeVisible()
-                await expect(createLocator).toBeVisible()
+                await createBlog(page, newBlog)
 
-                await titleLocator.fill('test blog')
-                await authorLocator.fill('test author')
-                await urlLocator.fill('test-url.com')
-                await createLocator.click()
-
-                await expect(page.getByText('a new blog test blog by test author added')).toBeVisible()
+                await expect(page.getByText(`a new blog ${newBlog.title} by ${newBlog.author} added`)).toBeVisible()
                 await expect(page.getByTestId('blog-summary')).toBeVisible()
+                await expect(page.getByTestId('blog-summary')).toContainText(`${newBlog.title} ${newBlog.author}`)
+            })
+
+            test('a blog can be liked', async ({page}) => {
+                await page.getByRole('button', {name:'create new blog'}).click()
+                await createBlog(page, newBlog)
+
+                await page.getByTestId('blog-summary').getByRole('button', {name: 'View'}).click()
+                await expect(page.getByText('likes').locator('..')).toContainText('0')
+                await page.getByRole('button', {name:'likes'}).click()
+                await expect(page.getByText('likes').locator('..')).toContainText('1')
             })
         })
+
     })
 
     
