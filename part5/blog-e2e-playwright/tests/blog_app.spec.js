@@ -85,6 +85,33 @@ describe('Blog app', () => {
                 await page.getByRole('button', {name:'likes'}).click()
                 await expect(page.getByText('likes').locator('..')).toContainText('1')
             })
+
+            test('a user can delete own blog', async ({page}) => {
+                await page.getByRole('button', {name:'create new blog'}).click()
+                await createBlog(page, newBlog)
+                // // Wait for the success notification to disappear (it has 5 second timeout in App.jsx)
+                // await expect(page.getByText(`a new blog ${newBlog.title} by ${newBlog.author} added`)).toBeVisible()
+                // await expect(page.getByText(`a new blog ${newBlog.title} by ${newBlog.author} added`)).not.toBeVisible()
+
+                await page.getByTestId('blog-summary').getByRole('button', {name: 'View'}).click()
+
+                const deleteButton = await page.getByRole('button', {name:'Delete'})
+                await expect(deleteButton).toBeVisible()
+
+                // Set up dialog handler BEFORE clicking delete
+                page.on('dialog', async dialog => {
+                    expect(dialog.type()).toBe('confirm')
+                    expect(dialog.message()).toContain('Remove blog')
+                    await dialog.accept() // Click "OK"
+                })
+
+                await deleteButton.click()
+                // Verify blog is deleted
+                await expect(page.getByTestId('blog-summary')).toHaveCount(0)
+                await expect(page.getByTestId('blog-details')).toHaveCount(0)
+
+
+            })
         })
 
     })
