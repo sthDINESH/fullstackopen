@@ -6,6 +6,11 @@ const user = {
                 password: "abcd1234" 
             }
 
+const userWithNoBlogsCreated = {
+    username: 'tester2',
+    password: 'abcd12342'
+}
+
 const newBlog = {
     title: 'test blog',
     author: 'test author',
@@ -32,6 +37,13 @@ describe('Blog app', () => {
                     name: user.name,
                     username: user.username,
                     password: user.password
+                }
+            })
+            await request.post('/api/users', {
+                data: {
+                    name: userWithNoBlogsCreated.name,
+                    username: userWithNoBlogsCreated.username,
+                    password: userWithNoBlogsCreated.password
                 }
             })
             await page.goto('/')
@@ -109,8 +121,33 @@ describe('Blog app', () => {
                 // Verify blog is deleted
                 await expect(page.getByTestId('blog-summary')).toHaveCount(0)
                 await expect(page.getByTestId('blog-details')).toHaveCount(0)
+            })
+        })
 
+        describe('When logged in as user without blogs', () => {
+            beforeEach(async ({page}) => {
+                await loginWith(page, user.username, user.password)
+                await page.getByRole('button', {name:'create new blog'}).click()
+                await createBlog(page, newBlog)
+                await expect(page.getByTestId('blog-summary')).toBeVisible()
 
+                page.on('dialog', async dialog => {
+                    await expect(dialog.type()).toBe('confirm')
+                    await expect(dialog.message()).toMatch(/Are you sure/)
+                    await dialog.accept()
+                })
+                await page.getByRole('button', {name: 'logout'}).click()
+
+                await loginWith(page, userWithNoBlogsCreated.username, userWithNoBlogsCreated.password)
+                await expect(page.getByText(`${userWithNoBlogsCreated.username} logged in`)).toBeVisible()
+            })
+
+            test('delete button for blog is not visible', async ({page}) => {
+                await expect(page.getByTestId('blog-summary')).toBeVisible()
+                await expect(page.getByTestId('blog-summary')).toContainText(`${newBlog.title} ${newBlog.author}`)
+                await page.getByTestId('blog-summary').getByRole('button', {name: 'View'}).click()
+                await expect(page.getByTestId('blog-details')).toContainText(`${newBlog.title} ${newBlog.author}`)
+                await expect(page.getByRole('button', {name:'Delete'})).not.toBeVisible()
             })
         })
 
