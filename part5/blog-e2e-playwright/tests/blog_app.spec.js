@@ -1,5 +1,5 @@
 const { describe, beforeEach, test, expect } = require('@playwright/test')
-const { loginWith, createBlog } = require('./test_helper')
+const { loginWith, createBlog, likeBlog } = require('./test_helper')
 
 const user = {
                 username: "tester",
@@ -148,6 +148,42 @@ describe('Blog app', () => {
                 await page.getByTestId('blog-summary').getByRole('button', {name: 'View'}).click()
                 await expect(page.getByTestId('blog-details')).toContainText(`${newBlog.title} ${newBlog.author}`)
                 await expect(page.getByRole('button', {name:'Delete'})).not.toBeVisible()
+            })
+
+            test('blogs are arranged with most likes first', async ({page}) => {
+                const addBlog = {
+                    title: 'add blog',
+                    author: 'add author',
+                    url: 'add-url.com', 
+                }
+                await page.getByRole('button', {name:'create new blog'}).click()
+                await createBlog(page, addBlog)
+
+                let blogs = page.getByTestId('blog-summary')
+                await expect(blogs).toHaveCount(2)
+
+                // First, click View to show the details for both blogs
+                await page.getByTestId('blog-summary').filter({hasText: newBlog.title}).getByRole('button', {name: 'View'}).click()
+                await page.getByTestId('blog-summary').filter({hasText: addBlog.title}).getByRole('button', {name: 'View'}).click()
+
+                // Like newBlog once
+                await likeBlog(page, newBlog)
+                // Wait for the likes to update to 1
+                const newBlogDetails = page.getByTestId('blog-details').filter({hasText: newBlog.title})
+                await expect(newBlogDetails.getByText(/likes:/)).toContainText('likes: 1')
+                
+                // Like addBlog twice
+                await likeBlog(page, addBlog)
+                const addBlogDetails = page.getByTestId('blog-details').filter({hasText: addBlog.title})
+                await expect(addBlogDetails.getByText(/likes:/)).toContainText('likes: 1')
+                
+                await likeBlog(page, addBlog)
+                await expect(addBlogDetails.getByText(/likes:/)).toContainText('likes: 2')
+
+                // Verify order - blog with most likes should be first
+                const blogSummaries = await page.getByTestId('blog-summary').allTextContents()
+                expect(blogSummaries[0]).toContain(addBlog.title)
+                expect(blogSummaries[1]).toContain(newBlog.title)
             })
         })
 
