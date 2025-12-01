@@ -27,7 +27,7 @@ const reducer = (state = initialState, action) => {
       console.log("vote", action.payload.id)
       return state.map(s => 
         s.id === action.payload.id ? {...s, votes: s.votes + 1 }: s
-      )
+      ).toSorted((a,b) => b.votes - a.votes)
     case "NEW_ANECDOTE":
       return [ ...state, action.payload ]
     default:
