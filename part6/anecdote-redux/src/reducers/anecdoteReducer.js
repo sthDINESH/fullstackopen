@@ -41,14 +41,21 @@ const anecdotesSlice = createSlice({
   }
 })
 
-const { setAnecdotes } = anecdotesSlice.actions
+const { setAnecdotes, createAnecdote } = anecdotesSlice.actions
 
 export const initializeAnecdotes = () => {
-  return async (dispatch, getState) => {
+  return async (dispatch) => {
     const anecdotes = await anecdotesService.getAll()
     dispatch(setAnecdotes(anecdotes))
   } 
 }
 
-export const { addVote, createAnecdote } = anecdotesSlice.actions
+export const appendAnecdote = (content) => {
+  return async (dispatch) => {
+    const savedAnecdote = await anecdotesService.create(content)
+    dispatch(createAnecdote(savedAnecdote))
+  }
+}
+
+export const { addVote } = anecdotesSlice.actions
 export default anecdotesSlice.reducer
