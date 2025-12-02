@@ -9,7 +9,7 @@ import { createSlice } from "@reduxjs/toolkit"
 //   'Debugging is twice as hard as writing the code in the first place. Therefore, if you write the code as cleverly as possible, you are, by definition, not smart enough to debug it.'
 // ]
 
-const getId = () => (100000 * Math.random()).toFixed(0)
+// const getId = () => (100000 * Math.random()).toFixed(0)
 
 // const asObject = anecdote => {
 //   return {
@@ -31,11 +31,7 @@ const anecdotesSlice = createSlice({
       ).toSorted((a,b) => b.votes - a.votes)
     },
     createAnecdote(state, action) {
-      state.push({
-        content: action.payload,
-        id: getId(),
-        votes: 0
-      })
+      state.push(action.payload)
       return state
     },
     setAnecdotes(state, action){
