@@ -17,6 +17,13 @@ const AnecdoteForm = () => {
         payload: `new anecdote '${newAnecdote.content}' created`
       })
       setTimeout(()=>notificationDispatch({type:'CLEAR_MESSAGE'}), 5000)
+    },
+    onError: (error) => {
+      notificationDispatch({
+        type: 'SET_MESSAGE',
+        payload: 'too short anecdote, must have length 5 or more',
+      })
+      setTimeout(()=>notificationDispatch({type:'CLEAR_MESSAGE'}), 5000) 
     } 
   })
 
