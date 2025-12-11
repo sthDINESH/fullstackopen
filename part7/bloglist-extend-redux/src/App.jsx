@@ -1,8 +1,9 @@
 import { useState, useEffect, useRef } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import Blog from './components/Blog'
 import Notification from './components/Notification'
 import { showSuccess, showError, clear } from './reducers/notificationReducer'
+import { initializeBlogs, addBlog } from './reducers/blogsReducer'
 import BlogForm from './components/BlogForm'
 import Togglable from './components/Togglable'
 import blogService from './services/blogs'
@@ -10,8 +11,8 @@ import loginService from './services/login'
 
 const App = () => {
   const dispatch = useDispatch()
+  const blogs = useSelector(state => state.blogs)
 
-  const [blogs, setBlogs] = useState([])
   const [userName, setUserName] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
@@ -19,10 +20,8 @@ const App = () => {
   const blogFormVisibilityRef = useRef(null)
 
   useEffect(() => {
-    blogService.getAll().then(blogs =>
-      setBlogs( blogs.sort((a, b) => b.likes - a.likes ))
-    )
-  }, [])
+    dispatch(initializeBlogs())
+  }, [dispatch])
 
   useEffect(() => {
     const userJSON = window.localStorage.getItem('blogAppUser')
@@ -63,13 +62,10 @@ const App = () => {
 
   const createBlog = async (blogObject) => {
     try {
-      const savedBlog = await blogService.create(blogObject)
-      dispatch(showSuccess(`a new blog ${savedBlog.title} by ${savedBlog.author} added`))
+      await dispatch(addBlog(blogObject))
+      dispatch(showSuccess(`a new blog ${blogObject.title} by ${blogObject.author} added`))
       blogFormVisibilityRef.current.toggleVisibility()
       setTimeout(() => dispatch(clear()), 5000)
-      blogService.getAll().then(blogs =>
-        setBlogs( blogs )
-      )
     }
     catch (error) {
       dispatch(showSuccess(`Error: ${error.message}`))
