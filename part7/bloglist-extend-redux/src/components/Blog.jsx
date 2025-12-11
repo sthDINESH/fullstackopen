@@ -17,8 +17,7 @@ const Blog = ({ blog, updateBlog, removeBlog, user }) => {
   const toggleVisibility = () => setVisible(!visible)
 
   const updateLikes = () => {
-    blog.likes += 1
-    updateBlog(blog)
+    updateBlog({ ...blog, likes: blog.likes + 1 })
   }
 
   const handleDelete = () => {

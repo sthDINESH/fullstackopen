@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import Blog from './components/Blog'
 import Notification from './components/Notification'
 import { showSuccess, showError, clear } from './reducers/notificationReducer'
-import { initializeBlogs, addBlog } from './reducers/blogsReducer'
+import { initializeBlogs, addBlog, likeBlog, deleteBlog } from './reducers/blogsReducer'
 import BlogForm from './components/BlogForm'
 import Togglable from './components/Togglable'
 import blogService from './services/blogs'
@@ -75,8 +75,7 @@ const App = () => {
 
   const updateBlog = async (blog) => {
     try {
-      const updatedBlog = await blogService.update(blog.id, blog)
-      setBlogs( blogs.map(b => b.id===updatedBlog.id? updatedBlog: b).toSorted((a,b) => b.likes-a.likes))
+      await dispatch(likeBlog(blog))
     }
     catch (error) {
       dispatch(showError(`Error: ${error.message}`))
@@ -86,8 +85,7 @@ const App = () => {
 
   const removeBlog = async (blog) => {
     try {
-      await blogService.remove(blog.id)
-      setBlogs( blogs.filter(b => b.id!==blog.id).toSorted((a,b) => b.likes-a.likes))
+      await dispatch(deleteBlog(blog.id))
     }
     catch (error) {
       dispatch(showError(`Error: ${error.message}`))
