@@ -4,6 +4,7 @@ import Blog from './components/Blog'
 import Notification from './components/Notification'
 import { showSuccess, showError, clear } from './reducers/notificationReducer'
 import { initializeBlogs, addBlog, likeBlog, deleteBlog } from './reducers/blogsReducer'
+import { setLoggedUser, clearLoggedUser } from './reducers/userReducer'
 import BlogForm from './components/BlogForm'
 import Togglable from './components/Togglable'
 import blogService from './services/blogs'
@@ -12,10 +13,10 @@ import loginService from './services/login'
 const App = () => {
   const dispatch = useDispatch()
   const blogs = useSelector(state => state.blogs)
+  const user = useSelector(state => state.user)
 
   const [userName, setUserName] = useState('')
   const [password, setPassword] = useState('')
-  const [user, setUser] = useState(null)
 
   const blogFormVisibilityRef = useRef(null)
 
@@ -24,13 +25,10 @@ const App = () => {
   }, [dispatch])
 
   useEffect(() => {
-    const userJSON = window.localStorage.getItem('blogAppUser')
-    if (userJSON){
-      const user = JSON.parse(userJSON)
-      setUser(user)
+    if (user){
       blogService.setToken(user.token)
     }
-  }, [])
+  }, [user])
 
   const handleLogin = async event => {
     event.preventDefault()
@@ -40,7 +38,7 @@ const App = () => {
       const user = await loginService.login({ username: userName, password: password })
       window.localStorage.setItem('blogAppUser', JSON.stringify(user))
       blogService.setToken(user.token)
-      setUser(user)
+      dispatch(setLoggedUser(user))
       setUserName('')
       setPassword('')
     }
@@ -56,7 +54,7 @@ const App = () => {
     if(window.confirm('Are you sure you want to log out?')){
       window.localStorage.removeItem('blogAppUser')
       blogService.setToken(null)
-      setUser(null)
+      dispatch(clearLoggedUser())
     }
   }
 
