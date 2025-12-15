@@ -13,7 +13,7 @@ const notificationSlice = createSlice({
     showError: (state, action) => {
       return {
         content: action.payload,
-        type: 'error',
+        type: 'danger',
       }
     },
     clear: () => {

@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Form, Button } from 'react-bootstrap'
 
 const BlogForm = ( { createBlog } ) => {
   // form inputs as states
@@ -15,28 +16,28 @@ const BlogForm = ( { createBlog } ) => {
   }
 
   return (
-    <form onSubmit={handleSubmit}>
+    <Form onSubmit={handleSubmit} className='pb-3'>
       <h2>create new</h2>
-      <div>
-        <label>
+      <Form.Group>
+        <Form.Label>
             title
-          <input type='text' value={title} onChange={({ target }) => setTitle(target.value)}></input>
-        </label>
-      </div>
-      <div>
-        <label>
+          <Form.Control type='text' value={title} onChange={({ target }) => setTitle(target.value)}></Form.Control>
+        </Form.Label>
+      </Form.Group>
+      <Form.Group>
+        <Form.Label>
             author
-          <input type='text' value={author} onChange={({ target }) => setAuthor(target.value)}></input>
-        </label>
-      </div>
-      <div>
-        <label>
+          <Form.Control type='text' value={author} onChange={({ target }) => setAuthor(target.value)}></Form.Control>
+        </Form.Label>
+      </Form.Group>
+      <Form.Group>
+        <Form.Label>
             url
-          <input type='text' value={url} onChange={({ target }) => setUrl(target.value)}></input>
-        </label>
-      </div>
-      <button type="submit">create</button>
-    </form>
+          <Form.Control type='url' value={url} onChange={({ target }) => setUrl(target.value)}></Form.Control>
+        </Form.Label>
+      </Form.Group>
+      <Button type="submit" variant='primary'>create</Button>
+    </Form>
   )
 }
 

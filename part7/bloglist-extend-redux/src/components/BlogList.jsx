@@ -2,11 +2,12 @@ import { useRef, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { Link } from 'react-router'
 import Blog from './Blog'
-import { initializeBlogs, addBlog, deleteBlog } from '../reducers/blogsReducer'
+import { initializeBlogs, addBlog } from '../reducers/blogsReducer'
 import BlogForm from './BlogForm'
 import Togglable from './Togglable'
-import { showSuccess, showError, clear } from '../reducers/notificationReducer'
+import { showSuccess, clear } from '../reducers/notificationReducer'
 import blogService from '../services/blogs'
+import { ListGroup } from 'react-bootstrap'
 
 const BlogList = () => {
   const blogs = useSelector(state => state.blogs)
@@ -44,9 +45,11 @@ const BlogList = () => {
       <Togglable buttonLabel='create new blog' ref={blogFormVisibilityRef}>
         <BlogForm createBlog={createBlog} />
       </Togglable>
-      {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
-      )}
+      <ListGroup>
+        {blogs.map(blog =>
+          <Blog key={blog.id} blog={blog} />
+        )}
+      </ListGroup>
     </div>
   )
 }

@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux'
-import { Routes, Route, useMatch, NavLink } from 'react-router'
+import { Routes, Route, useMatch, NavLink, useNavigate } from 'react-router'
 import Notification from './components/Notification'
 import { clearLoggedUser } from './reducers/userReducer'
 import blogService from './services/blogs'
@@ -10,12 +10,15 @@ import UserBlogs from './components/UserBlogs'
 import BlogDetail from './components/BlogDetail'
 import { likeBlog, deleteBlog, addComment } from './reducers/blogsReducer'
 import { showError, clear } from './reducers/notificationReducer'
+import { Container, Nav, Navbar, Button } from 'react-bootstrap'
 
 const App = () => {
   const dispatch = useDispatch()
   const user = useSelector(state => state.user)
   const users = useSelector(state => state.users)
   const blogs = useSelector(state => state.blogs)
+
+  const navigate = useNavigate()
 
   const userIdBlogList = useMatch('/users/:id')?.params.id
   console.log('id', userIdBlogList)
@@ -46,6 +49,7 @@ const App = () => {
   const removeBlog = async (blog) => {
     try {
       await dispatch(deleteBlog(blog.id))
+      navigate('/')
     }
     catch (error) {
       dispatch(showError(`Error: ${error.message}`))
@@ -75,22 +79,28 @@ const App = () => {
 
   return (
     <div>
-      <nav style={navStyle}>
-        <NavLink to='/' style={navLinkStyle}>blogs</NavLink>
-        <NavLink to='/users' style={navLinkStyle}>users</NavLink>
-        {
-          user && <span>{user.username} logged in <button onClick={handleLogout}>Logout</button></span>
-        }
-      </nav>
-      {!user && <Login />}
-      <h1>blogs</h1>
-      <Notification />
-      <Routes>
-        <Route path='/' element={<BlogList />} />
-        <Route path='/users' element={<Users />} />
-        <Route path='/users/:id' element={<UserBlogs user={userBlogList} />} />
-        <Route path='/blogs/:id' element={<BlogDetail blog={blogBlogDetail} updateBlog={updateBlog} removeBlog={removeBlog} user={user} addComment={addBlogComment} />} />
-      </Routes>
+      <Navbar>
+        <Container>
+          <Nav className='me-auto'>
+            <Nav.Link as={NavLink} to='/' style={navLinkStyle}>blogs</Nav.Link>
+            <Nav.Link as={NavLink} to='/users' style={navLinkStyle}>users</Nav.Link>
+          </Nav>
+          {
+            user && <span>{user.username} logged in <Button onClick={handleLogout}>Logout</Button></span>
+          }
+        </Container>
+      </Navbar>
+      <div className='container'>
+        {!user && <Login />}
+        <h1>blogs</h1>
+        <Notification />
+        <Routes>
+          <Route path='/' element={<BlogList />} />
+          <Route path='/users' element={<Users />} />
+          <Route path='/users/:id' element={<UserBlogs user={userBlogList} />} />
+          <Route path='/blogs/:id' element={<BlogDetail blog={blogBlogDetail} updateBlog={updateBlog} removeBlog={removeBlog} user={user} addComment={addBlogComment} />} />
+        </Routes>
+      </div>
     </div>
   )
 }
