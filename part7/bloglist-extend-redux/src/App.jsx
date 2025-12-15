@@ -8,7 +8,7 @@ import Users from './components/Users'
 import Login from './components/Login'
 import UserBlogs from './components/UserBlogs'
 import BlogDetail from './components/BlogDetail'
-import { likeBlog, deleteBlog } from './reducers/blogsReducer'
+import { likeBlog, deleteBlog, addComment } from './reducers/blogsReducer'
 import { showError, clear } from './reducers/notificationReducer'
 
 const App = () => {
@@ -53,6 +53,16 @@ const App = () => {
     }
   }
 
+  const addBlogComment = async (id, comment) => {
+    try {
+      await dispatch(addComment(id, comment))
+    }
+    catch (error) {
+      dispatch(showError(`Error: ${error.message}`))
+      setTimeout(() => dispatch(clear()), 5000)
+    }
+  }
+
   const navStyle = {
     backgroundColor: 'grey',
     padding: 2,
@@ -79,7 +89,7 @@ const App = () => {
         <Route path='/' element={<BlogList />} />
         <Route path='/users' element={<Users />} />
         <Route path='/users/:id' element={<UserBlogs user={userBlogList} />} />
-        <Route path='/blogs/:id' element={<BlogDetail blog={blogBlogDetail} updateBlog={updateBlog} removeBlog={removeBlog} user={user}/>} />
+        <Route path='/blogs/:id' element={<BlogDetail blog={blogBlogDetail} updateBlog={updateBlog} removeBlog={removeBlog} user={user} addComment={addBlogComment} />} />
       </Routes>
     </div>
   )

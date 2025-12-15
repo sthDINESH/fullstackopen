@@ -1,4 +1,7 @@
-const BlogDetail = ({ blog, updateBlog, removeBlog, user }) => {
+import { useState } from 'react'
+import { addComment } from '../reducers/blogsReducer'
+
+const BlogDetail = ({ blog, updateBlog, removeBlog, user, addComment }) => {
   if(!blog){
     return null
   }
@@ -29,16 +32,29 @@ const BlogDetail = ({ blog, updateBlog, removeBlog, user }) => {
           )
         }
       </div>
-      <Comments comments={blog.comments} />
+      <Comments blogId={blog.id} comments={blog.comments} addComment={addComment} />
 
     </>
   )
 }
 
-const Comments = ({ comments }) => {
+const Comments = ({ blogId, comments, addComment }) => {
+  const [ comment, setComment ] = useState('')
+
+  const submitComment = (e) => {
+    e.preventDefault()
+    console.log('submit comment:', comment)
+    addComment(blogId, comment)
+    setComment('')
+  }
+
   return (
     <>
       <h3>comments</h3>
+      <form onSubmit={submitComment}>
+        <input value={comment} onChange={ (e) => setComment(e.target.value) }/>
+        <button>add comment</button>
+      </form>
       <ul>
         {comments.map(comment => <li key={comment.id}>{comment.body}</li>)}
       </ul>
