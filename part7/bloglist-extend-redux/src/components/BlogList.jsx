@@ -1,7 +1,8 @@
 import { useRef, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
+import { Link } from 'react-router'
 import Blog from './Blog'
-import { initializeBlogs, addBlog, likeBlog, deleteBlog } from '../reducers/blogsReducer'
+import { initializeBlogs, addBlog, deleteBlog } from '../reducers/blogsReducer'
 import BlogForm from './BlogForm'
 import Togglable from './Togglable'
 import { showSuccess, showError, clear } from '../reducers/notificationReducer'
@@ -38,33 +39,13 @@ const BlogList = () => {
     }
   }
 
-  const updateBlog = async (blog) => {
-    try {
-      await dispatch(likeBlog(blog))
-    }
-    catch (error) {
-      dispatch(showError(`Error: ${error.message}`))
-      setTimeout(() => dispatch(clear()), 5000)
-    }
-  }
-
-  const removeBlog = async (blog) => {
-    try {
-      await dispatch(deleteBlog(blog.id))
-    }
-    catch (error) {
-      dispatch(showError(`Error: ${error.message}`))
-      setTimeout(() => dispatch(clear()), 5000)
-    }
-  }
-
   return (
     <div>
       <Togglable buttonLabel='create new blog' ref={blogFormVisibilityRef}>
         <BlogForm createBlog={createBlog} />
       </Togglable>
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} updateBlog={updateBlog} removeBlog={removeBlog} user={user} />
+        <Blog key={blog.id} blog={blog} />
       )}
     </div>
   )
