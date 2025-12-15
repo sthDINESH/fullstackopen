@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux'
-import { Routes, Route, useMatch } from 'react-router'
+import { Routes, Route, useMatch, NavLink } from 'react-router'
 import Notification from './components/Notification'
 import { clearLoggedUser } from './reducers/userReducer'
 import blogService from './services/blogs'
@@ -53,21 +53,28 @@ const App = () => {
     }
   }
 
+  const navStyle = {
+    backgroundColor: 'grey',
+    padding: 2,
+  }
+
+  const navLinkStyle = {
+    paddingLeft:2,
+    paddingRight:2,
+  }
+
   return (
     <div>
+      <nav style={navStyle}>
+        <NavLink to='/' style={navLinkStyle}>blogs</NavLink>
+        <NavLink to='/users' style={navLinkStyle}>users</NavLink>
+        {
+          user && <span>{user.username} logged in <button onClick={handleLogout}>Logout</button></span>
+        }
+      </nav>
       {!user && <Login />}
-      {user && (
-        <div>
-          <h1>blogs</h1>
-          <Notification />
-          <div>
-            {user.username} logged in
-            <div>
-              <button onClick={handleLogout}>Logout</button>
-            </div>
-          </div>
-        </div>
-      )}
+      <h1>blogs</h1>
+      <Notification />
       <Routes>
         <Route path='/' element={<BlogList />} />
         <Route path='/users' element={<Users />} />
