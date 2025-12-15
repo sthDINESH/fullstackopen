@@ -1,4 +1,7 @@
 const BlogDetail = ({ blog, updateBlog, removeBlog, user }) => {
+  if(!blog){
+    return null
+  }
   const updateLikes = () => {
     updateBlog({ ...blog, likes: blog.likes + 1 })
   }
@@ -26,7 +29,19 @@ const BlogDetail = ({ blog, updateBlog, removeBlog, user }) => {
           )
         }
       </div>
+      <Comments comments={blog.comments} />
 
+    </>
+  )
+}
+
+const Comments = ({ comments }) => {
+  return (
+    <>
+      <h3>comments</h3>
+      <ul>
+        {comments.map(comment => <li key={comment.id}>{comment.body}</li>)}
+      </ul>
     </>
   )
 }
